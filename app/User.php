@@ -53,4 +53,8 @@ class User extends Authenticatable
     public static function generateVerificationCode(){
         return str_random(40);
     }
+
+    public function getRouteKeyName(){
+        return 'name';
+    }
 }
