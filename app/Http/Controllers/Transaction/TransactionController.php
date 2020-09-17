@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Transaction;
+
+use App\Http\Resources\TransactionResource;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 
 class TransactionController extends Controller
 {
@@ -14,29 +18,13 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+       $transaction = Transaction::with(['product', 'buyer'])->get();
+       $transaction =  TransactionResource::collection($transaction);
+       return response()->json(['status' => 'success', 'data' => $transaction], 200);
+        
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+   
 
     /**
      * Display the specified resource.
@@ -46,7 +34,9 @@ class TransactionController extends Controller
      */
     public function show($id)
     {
-        //
+        $transaction = Transaction::with(['product', 'buyer'])->findOrFail($id);
+        $transaction = new TransactionResource($transaction);
+        return response()->json(['status' => 'success', 'data' => $transaction]);
     }
 
     /**

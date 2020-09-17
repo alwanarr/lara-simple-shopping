@@ -35,21 +35,36 @@ class UserController extends Controller
     {
        
       
-        $rules = [
+        // $rules = [
+        //     'name' => 'required|unique:users',
+        //     'password'=> 'required|min:8|confirmed',
+        //     'email' => 'required|email|unique:users'
+        // ];
+        // $this->validate($request, $rules);
+
+        $validator = \Validator::make($request->all(), [
             'name' => 'required|unique:users',
             'password'=> 'required|min:8|confirmed',
             'email' => 'required|email|unique:users'
-        ];
-        $this->validate($request, $rules);
+          ]);
+
+          if($validator->fails())
+          {
+            return response()->json(['error' =>  'formulir yang anda masukan salah'], 400);
+          }
+          else 
+          {
+            $data = $request->all();
+            $data['password'] = bcrypt($request->password);
+            $data['verified'] = User::UNVERIFIED_USER;
+            $data['verification_token'] = User::generateVerificationCode();
+            $data['admin'] = User::REGULAR_USER;
+        
+            $user = User::create($data);
+            return response()->json(['data' =>  $user], 201);
+          }
        
-        $data = $request->all();
-        $data['password'] = bcrypt($request->password);
-        $data['verified'] = User::UNVERIFIED_USER;
-        $data['verification_token'] = User::generateVerificationCode();
-        $data['admin'] = User::REGULAR_USER;
-       
-        $user = User::create($data);
-        return response()->json(['data' =>  $user], 201);
+        // 
       
     }
 
@@ -81,12 +96,18 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // dd($user->name);
-        $rules = [
+        
+
+        $validator = \Validator::make($request->all(), [
             'password'=> 'min:8|confirmed',
             'email' => 'email|unique:users, email'. $user->id,
             'admin' => 'in:'.User::ADMIN_USER . ', '. User::REGULAR_USER,
-        ];
+        ]);
+
+        if($validator->fails())
+        {
+            return response()->json(['error' =>  'formulir yang anda masukan salah'], 400);
+        }
 
         if($request->has('name'))
         {

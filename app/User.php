@@ -42,6 +42,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    //mutator 
+    public function setNameAttribute($name){
+        $this->attributes['name'] = strtolower($name);
+    }
+
+    public function setEmailAttribute($email){
+        $this->attributes['email'] = strtolower($email);
+    }
+
+    //accesstor
+    public function getNameAttribute($name)
+    {
+        return ucwords($name);
+    }
+
+
     public function isAdmin(){
         return $this->admin == User::ADMIN_USER;
     }
