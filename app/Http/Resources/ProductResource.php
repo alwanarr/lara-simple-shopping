@@ -20,7 +20,7 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'quantity' => $this->quantity,
             'status' => $this->status,
-            'image' => $this->image,
+            'image' => url('https://www.harmoni/' .$this->image),
             'seller' => new SellerResource($this->seller)
         ];
     }

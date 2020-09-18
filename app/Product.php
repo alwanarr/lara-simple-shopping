@@ -20,6 +20,7 @@ class Product extends Model
         'image',
         'seller_id'
     ];
+    protected $hidden = ['pivot'];
 
     public function isAvailable(){
         return $this->status == Product::AVAILABLE_PRODUCT;
@@ -28,12 +29,12 @@ class Product extends Model
         return $this->belongsTo(Seller::class);
     }
     public function transactions(){
-        return $this->hasMany(Transactions::class);
+        return $this->hasMany(Transaction::class);
     }
     public function categories(){
         return $this->belongsToMany(Category::class);
     }
     public function getRouteKeyName(){
-        return 'name';
+        return 'slug';
     }
 }
