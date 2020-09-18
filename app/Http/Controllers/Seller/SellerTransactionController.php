@@ -2,21 +2,29 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Seller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Seller;
-class SellerController extends Controller
+
+class SellerTransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Seller $seller)
     {
-        $seller = Seller::has('products')->get();
-        return response()->json(['data' => $seller], 200);
-    }
+        
+        $transaction = $seller->products()
+                       ->whereHas('transactions')
+                       ->with('transactions')
+                       ->get()
+                       ->pluck('transactions')
+                       ->collapse();
+        return response()->json(['status' => 'success', 'data' =>   $transaction], 200);
+
+    }           
 
     /**
      * Show the form for creating a new resource.
@@ -42,23 +50,21 @@ class SellerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
     public function show(Seller $seller)
     {
-        $data = $seller::has('products')->find($seller->id);
-
-        return response()->json(['data' => $data], 200);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Seller $seller)
     {
         //
     }
@@ -67,10 +73,10 @@ class SellerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Seller $seller)
     {
         //
     }
@@ -78,10 +84,10 @@ class SellerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Seller  $seller
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Seller $seller)
     {
         //
     }

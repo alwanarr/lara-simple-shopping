@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Seller;
+namespace App\Http\Controllers\Buyer;
 
+use App\Buyer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Seller;
-class SellerController extends Controller
+use App\Http\Resources\BuyerProductResource;
+class BuyerProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Buyer $buyer)
     {
-        $seller = Seller::has('products')->get();
-        return response()->json(['data' => $seller], 200);
+        $buyerProduct = $buyer->transactions()->with('product')->get()->pluck('product');
+        $buyer = BuyerProductResource::collection($buyerProduct);
+        return response()->json(['status' => 'success', 'data' => $buyer],200);
     }
 
     /**
@@ -42,23 +44,21 @@ class SellerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Buyer  $buyer
      * @return \Illuminate\Http\Response
      */
-    public function show(Seller $seller)
+    public function show(Buyer $buyer)
     {
-        $data = $seller::has('products')->find($seller->id);
-
-        return response()->json(['data' => $data], 200);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Buyer  $buyer
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Buyer $buyer)
     {
         //
     }
@@ -67,10 +67,10 @@ class SellerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Buyer  $buyer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Buyer $buyer)
     {
         //
     }
@@ -78,10 +78,10 @@ class SellerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Buyer  $buyer
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Buyer $buyer)
     {
         //
     }
