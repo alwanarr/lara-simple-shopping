@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Product;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TransactionResource;
 
-class ProductTransactionController extends Controller
+class ProductBuyerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +15,13 @@ class ProductTransactionController extends Controller
      */
     public function index(Product $product)
     {
-        $transactions = $product->transactions;
-        $transactions = TransactionResource::collection($transactions);
-        return response()->json(['status' => 'success', 'data' => $transactions], 200);
+        $buyer = $product->transactions()
+                 ->with('buyer')
+                 ->get()
+                 ->pluck('buyer')
+                 ->unique('id')
+                 ->values();
+                 return response()->json(['status' => 'success', 'data' => $buyer], 200);
     }
 
     /**

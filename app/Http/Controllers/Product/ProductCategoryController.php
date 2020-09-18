@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Product;
 
 use App\Product;
+use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TransactionResource;
 
-class ProductTransactionController extends Controller
+class ProductCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +16,9 @@ class ProductTransactionController extends Controller
      */
     public function index(Product $product)
     {
-        $transactions = $product->transactions;
-        $transactions = TransactionResource::collection($transactions);
-        return response()->json(['status' => 'success', 'data' => $transactions], 200);
+        $categories = $product->categories;        
+        return response()->json(['status' => 'success', 'data' => $categories], 200);
+
     }
 
     /**
@@ -37,9 +37,10 @@ class ProductTransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request )
     {
-        //
+        // $product->categories()->attach([$category->id]); 
+       
     }
 
     /**
@@ -71,9 +72,12 @@ class ProductTransactionController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product, Category $category)
     {
-        //
+       
+        $product->categories()->syncWithoutDetaching([$category->id]);
+        // dd($product->categories);
+         return response()->json(['status' => 'success', 'data' => $product->categories], 200);
     }
 
     /**
@@ -82,8 +86,15 @@ class ProductTransactionController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product, Category $category)
     {
-        //
+        
+        if($product->categories()->detach($category->id)){
+
+            return response()->json(['status' => 'success', 'data' => $product->categories], 200);
+        }else{
+            return response()->json(['status' => 'error'], 404);
+        }
+
     }
 }

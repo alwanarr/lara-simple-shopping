@@ -57,10 +57,21 @@ class SellerProductController extends Controller
         {
             $data['status'] = Product::UNAVAILABLE_PRODUCT;
             $data['slug'] = \Str::slug($request->name);
-            $data['image'] = '1.jpg';
+            // $data['image'] = '1.jpg';
+            $file = $request->image;
+
+            if($request->hasFile('image'))
+            {
+                // $file_name = date("Y/m/d") . $file->getClientOriginalName();
+                $file_name = $file->getClientOriginalName();
+                $file->storeAs('products', $file_name);
+                $file = $file_name;
+               
+            }
             $data['seller_id'] = $seller->id;
-            
+            $data['image'] = $file;
             $product = Product::create($data);
+            // $product = ProductResource::collection($product);
             return response()->json(['status' => 'success', 'data' => $product], 200);
 
         }
